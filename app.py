@@ -8,6 +8,8 @@ app = Flask(__name__)
 3 - As rotas iniciadas com /api/estado acessarão os dados da tabela Estado
     3.1 - Caso dê tempo fazer tudo, adicionamos mais uma rota pra acessar dados
 4 - Pesquisar sobre como fazer a autenticação do acesso
+
+Obs.: Antes de desenvolver as funções lembrar de criar/conectar/povoar banco de dados SQLite
 '''
 
 @app.route('/api')
