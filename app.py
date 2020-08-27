@@ -8,9 +8,9 @@ app = Flask(__name__)
 3 - As rotas iniciadas com /api/estado acessarão os dados da tabela Estado
     3.1 - Caso dê tempo fazer tudo, adicionamos mais uma rota pra acessar dados
 4 - Pesquisar sobre como fazer a autenticação do acesso
-
 Obs.: Antes de desenvolver as funções lembrar de criar/conectar/povoar banco de dados SQLite
 '''
+
 
 @app.route('/api')
 def documentacao():
@@ -30,7 +30,7 @@ def municipios():
 def municipio_nome(uf):
     '''
     :param uf: sigla da UF
-    :return: Todos os dados de um município específico
+    :return: Todos os dados de um estado específico
     '''
 
 
@@ -52,7 +52,7 @@ def municipio_mun_data(uf, data_inicio, data_fim):
     :param uf: Sigla da UF
     :param data_inicio: Data inicial que se deseja obter os dados
     :param data_fim: Data final que se deseja obter os dados
-    :return: Os dados de um município específico dentro do intervalo passados pelo usuário
+    :return: Os dados de um estado específico dentro do intervalo passados pelo usuário
     '''
 
 
