@@ -5,8 +5,9 @@ db = SQLAlchemy()
 
 class Municipio (db.Model):
     __tablename__ = "municipios"
-    uf = db.Column(db.String, primary_key=True)
-    estado = db.Column(db.String)
+    id = db.Column(db.Integer, primary_key=True)
+    municipio = db.Column(db.String)
+    sigla_UF = db.Column(db.String)
     regiao = db.Column(db.String)
     mes = db.Column(db.Integer)
     ano = db.Column(db.Integer)
@@ -15,9 +16,10 @@ class Municipio (db.Model):
 
 class Estado(db.Model):
     __tablename__ = "estados"
-    uf = db.Column(db.String, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     estado = db.Column(db.String)
     crime = db.Column(db.String)
-    mes = db.Column(db.String)
+    mes = db.Column(db.Integer)
+    ano = db.Column(db.Integer)
     vitimas = db.Column(db.Integer)
     ocorrencias =db.Column(db.Integer)
