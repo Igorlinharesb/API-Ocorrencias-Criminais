@@ -16,21 +16,35 @@ db.init_app(app)
 Obs.: Antes de desenvolver as funções lembrar de criar/conectar/povoar banco de dados SQLite
 '''
 
+
 '''import csv
 
-Dados dos muunicípios adicionados à tabela municipios
+Script utilizado apenas para povoar o banco de dados
+
 @app.route("/povoar_bd")
 def index():
-    f = open("data/mun_csv.csv", encoding='utf-8')
-    data = csv.reader(f)
+    with app.app_context():
+        db.create_all()
+
+    f = open("data/foo.csv", encoding='utf-8')
+    g = open("data/mun_csv.csv", encoding='utf-8')
+    dataf = csv.reader(f)
+    datag = csv.reader(g)
     output = ""
 
     id = 1
-    for municipio, sigla_UF, regiao, vitimas, mes, ano in data:
+    for estado, crime, ano, mes, ocorrencias, vitimas, ocorrencias_2 in dataf:
+        e = Estado(id=id, estado=estado, crime=crime, ano=ano, mes=mes, vitimas=vitimas, ocorrencias=ocorrencias)
+        db.session.add(e)
+        output = output + f"{e.estado} - {e.mes}/{e.ano}."
+        id = id+1
+
+    id = 1
+    for municipio, sigla_UF, regiao, vitimas, mes, ano in datag:
         m = Municipio(id=id, municipio=municipio, sigla_UF=sigla_UF, regiao=regiao, vitimas=vitimas, mes=mes, ano=ano)
         db.session.add(m)
         output = output + f"Município {m.municipio} - {m.sigla_UF}."
-        id = id+1
+        id = id + 1
     db.session.commit()
 
     return output
