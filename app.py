@@ -1,132 +1,255 @@
-from flask import Flask
+from flask import Flask, request, jsonify
+from flask_restful import Resource, Api
 from models import *
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tabelas.db'
+app.config['JSON_AS_ASCII'] = False
 db.init_app(app)
+api = Api(app)
 
 
-'''
-1 - a rota /api mostrará uma página web com a ducomentação da API
-2 - As rotas iniciadas com /api/municipios acessarão os dados da tabela Município
-3 - As rotas iniciadas com /api/estado acessarão os dados da tabela Estado
-    3.1 - Caso dê tempo fazer tudo, adicionamos mais uma rota pra acessar dados
-4 - Pesquisar sobre como fazer a autenticação do acesso
+# Retorna todos os dados de estados
+class AllEstados(Resource):
 
-Obs.: Antes de desenvolver as funções lembrar de criar/conectar/povoar banco de dados SQLite
-'''
+    def get(self, page_num):
+        ests = Estado.query.paginate(per_page=100, page=int(page_num))
 
+        results = []
+        for item in ests.items:
+            temp = {"estado": item.estado,
+                    "crime": item.crime,
+                    "mes_ano": f"{item.mes}-{item.ano}",
+                    "vitimas": item.vitimas,
+                    "ocorrencias": item.ocorrencias}
 
-'''import csv
+            results.append(temp)
 
-Script utilizado apenas para povoar o banco de dados
+        num_items = len(results)
 
-@app.route("/povoar_bd")
-def index():
-    with app.app_context():
-        db.create_all()
+        if ests.has_next:
+            next_page = ests.next_num
+        else:
+            next_page = None
 
-    f = open("data/foo.csv", encoding='utf-8')
-    g = open("data/mun_csv.csv", encoding='utf-8')
-    dataf = csv.reader(f)
-    datag = csv.reader(g)
-    output = ""
+        if ests.has_prev:
+            prev_page = ests.prev_num
+        else:
+            prev_page = None
 
-    id = 1
-    for estado, crime, ano, mes, ocorrencias, vitimas, ocorrencias_2 in dataf:
-        e = Estado(id=id, estado=estado, crime=crime, ano=ano, mes=mes, vitimas=vitimas, ocorrencias=ocorrencias)
-        db.session.add(e)
-        output = output + f"{e.estado} - {e.mes}/{e.ano}."
-        id = id+1
-
-    id = 1
-    for municipio, sigla_UF, regiao, vitimas, mes, ano in datag:
-        m = Municipio(id=id, municipio=municipio, sigla_UF=sigla_UF, regiao=regiao, vitimas=vitimas, mes=mes, ano=ano)
-        db.session.add(m)
-        output = output + f"Município {m.municipio} - {m.sigla_UF}."
-        id = id + 1
-    db.session.commit()
-
-    return output
-'''
-
-@app.route('/api')
-def documentacao():
-
-    '''
-    :return: Página da documentação da API
-    '''
-
-@app.route('/api/municipio')
-def municipios():
-    '''
-    :return: todos os dados da base de dados de municípios
-    '''
+        return jsonify({"has_next": ests.has_next,
+                        "next_page": next_page,
+                        "has_prev": ests.has_prev,
+                        "prev_page": prev_page,
+                        "num_items": num_items,
+                        "total_results": ests.total,
+                        "num_pages": ests.pages,
+                        "results": results})
 
 
-@app.route('/api/municipio/uf=<string:uf>')
-def municipio_nome(uf):
-    '''
-    :param uf: sigla da UF
-    :return: Todos os dados de um estado específico
-    '''
+class EstadosByUF(Resource):
+    def get(self, uf, page_num):
+        pass
 
 
-@app.route('/api/municipio/inicio=<string:data_inicio>&fim=<string:data_fim>')
-def municipio_data(data_inicio, data_fim):
-    '''
-    Obs.: Criar rotas alternativas caso o usuário entre apenas com a data de início,
-          ou apenas com a data final.
-    :param data_inicio: Data inicial que se deseja obter os dados
-    :param data_fim: Data final que se deseja obter os dados
-    :return: Os dados de todos os municípios dentro do intervalo passados pelo usuário
-    '''
+class EstadoByDataI(Resource):
+    def get(self, data_inicio, page_num):
+        pass
 
 
-@app.route('/api/municipio/uf=<string:uf>/inicio=<string:data_inicio>&fim=<string:data_fim>')
-def municipio_e_data(uf, data_inicio, data_fim):
-    '''
-    Obs.: Essa função pode ser adicionada na função municipio_nome(), com parâmetros default
-    :param uf: Sigla da UF
-    :param data_inicio: Data inicial que se deseja obter os dados
-    :param data_fim: Data final que se deseja obter os dados
-    :return: Os dados de um estado específico dentro do intervalo passados pelo usuário
-    '''
+class EstadoByDataF(Resource):
+    def get(self, data_fim, page_num):
+        pass
 
 
-@app.route('/api/estado')
-def estados():
-    '''
-    :return: todos os dados da base de dados por estado
-    '''
+class EstadoByDataIF(Resource):
+    def get(self, data_inicio, data_fim, page_num):
+        pass
 
 
-@app.route('/api/estado/uf=<string:uf>')
-def estado(uf):
-    '''
-    :param uf: sigla da UF
-    :return: todos os dados da base de um estado específico
-    '''
+class EstadoByUFDataI(Resource):
+    def get(self, uf, data_inicio, page_num):
+        pass
 
 
-@app.route('/api/estado/inicio=<string:data_inicio>&fim=<string:data_fim>')
-def estado_data(data_inicio, data_fim):
-    '''
-    :param data_inicio: Data inicial que se deseja obter os dados
-    :param data_fim: Data final que se deseja obter os dados
-    :return: Todos os dados da base de dados dos estados em um determinado intervalo de tempo
-    '''
+class EstadoByUFDataF(Resource):
+    def get(self, uf, data_fim, page_num):
+        pass
 
 
-@app.route('/api/estado/uf=<string:uf>/inicio=<string:data_inicio>&fim=<string:data_fim>')
-def estado_e_data(uf, data_inicio, data_fim):
-    '''
-    :param uf: siga da UF
-    :param data_inicio: todos os dados da base de um estado específico
-    :param data_fim: Data final que se deseja obter os dados
-    :return: Os dados de um município específico dentro do intervalo passados pelo usuário
-    '''
+class EstadoByUFDataIF(Resource):
+    def get(self, uf, data_inicio, data_fim, page_num):
+        pass
+
+
+class AllMuns(Resource):
+    def get(self, page_num):
+        pass
+
+
+class MunByUF(Resource):
+    def get(self, uf, page_num):
+        pass
+
+
+class MunByDataI(Resource):
+    def get(self, data_inicio, page_num):
+        pass
+
+
+class MunByDataF(Resource):
+    def get(self, data_fim, page_num):
+        pass
+
+
+class MunByDataIF(Resource):
+    def get(self, data_inicio, data_fim, page_num):
+        pass
+
+
+class MunByUFDataI(Resource):
+    def get(self, uf, data_inicio, page_num):
+        try:
+            mes = int(data_inicio.split("-")[0])
+            ano = int(data_inicio.split("-")[1])
+        except:
+            return jsonify({"erro": "Data inválida, verifique a documentação da API."}), 422
+
+        q1 = Municipio.query.filter_by(sigla_UF=uf.upper()
+                                       ).filter(Municipio.ano > ano)
+
+        q2 = Municipio.query.filter_by(sigla_UF=uf.upper()
+                                      ).filter(Municipio.ano == ano
+                                               ).filter(Municipio.mes >= mes)
+
+        m = q1.union_all(q2)
+
+        muns = m.paginate(per_page=100, page=int(page_num))
+
+        results = []
+        for item in muns.items:
+            temp = {"municipio": item.municipio,
+                    "sigla_UF": item.sigla_UF,
+                    "regiao": item.regiao,
+                    "mes_ano": f"{item.mes}-{item.ano}",
+                    "vitimas": item.vitimas}
+            results.append(temp)
+
+        num_items = len(results)
+
+        if muns.has_next:
+            next_page = muns.next_num
+        else:
+            next_page = None
+
+        if muns.has_prev:
+            prev_page = muns.prev_num
+        else:
+            prev_page = None
+
+        return jsonify({"has_next": muns.has_next,
+                        "next_page": next_page,
+                        "has_prev": muns.has_prev,
+                        "prev_page": prev_page,
+                        "num_items": num_items,
+                        "total_results": muns.total,
+                        "num_pages": muns.pages,
+                        "results": results})
+
+
+class MunByUFDataF(Resource):
+    def get(self, uf, data_fim, page_num):
+        try:
+            mes = int(data_fim.split("-")[0])
+            ano = int(data_fim.split("-")[1])
+
+            if mes < 1 or mes > 12:
+                return jsonify({"erro": "Data inválida, verifique a documentação da API."}), 422
+
+        except:
+            return jsonify({"erro": "Data inválida, verifique a documentação da API."}), 422
+
+        q1 = Municipio.query.filter_by(sigla_UF=uf.upper()
+                                       ).filter(Municipio.ano < ano)
+
+        q2 = Municipio.query.filter_by(sigla_UF=uf.upper()
+                                      ).filter(Municipio.ano == ano
+                                               ).filter(Municipio.mes <= mes)
+
+        m = q1.union_all(q2)
+
+        muns = m.paginate(per_page=100, page=int(page_num))
+
+        results = []
+        for item in muns.items:
+            temp = {"municipio": item.municipio,
+                    "sigla_UF": item.sigla_UF,
+                    "regiao": item.regiao,
+                    "mes_ano": f"{item.mes}-{item.ano}",
+                    "vitimas": item.vitimas}
+            results.append(temp)
+
+        num_items = len(results)
+
+        if muns.has_next:
+            next_page = muns.next_num
+        else:
+            next_page = None
+
+        if muns.has_prev:
+            prev_page = muns.prev_num
+        else:
+            prev_page = None
+
+        return jsonify({"has_next": muns.has_next,
+                        "next_page": next_page,
+                        "has_prev": muns.has_prev,
+                        "prev_page": prev_page,
+                        "num_items": num_items,
+                        "total_results": muns.total,
+                        "num_pages": muns.pages,
+                        "results": results})
+
+
+class MunByUFDataIF(Resource):
+    def get(self, uf, data_inicio, data_fim, page_num):
+        pass
+
+
+# Rotas Igor
+# Concluídas
+api.add_resource(MunByUFDataF, '/municipio/uf=<uf>/fim=<data_fim>/page=<page_num>')
+
+# Não concluídas
+api.add_resource(MunByUFDataI, '/municipio/uf=<uf>/inicio=d<ata_inicio>/page=<page_num>')
+api.add_resource(MunByUFDataIF, '/municipio/uf=<uf>/inicio=<data_inicio>&fim=<data_fim>/page=<page_num>')
+
+api.add_resource(EstadoByUFDataI, '/estado/uf=<uf>/inicio=<data_inicio>/page=<page_num>')
+api.add_resource(EstadoByUFDataF, '/estado/uf=<uf>/fim=<data_fim>/page=<page_num>')
+api.add_resource(EstadoByUFDataIF, '/estado/uf=<uf>/inicio=<data_inicio>&fim=<data_fim>/page=<page_num>')
+
+# Ruan
+# Concluídas
+
+# Não Concluídas
+api.add_resource(AllMuns, '/municipio')
+api.add_resource(MunByUF, '/municipio/uf=<uf>/page=<page_num>')
+api.add_resource(EstadosByUF, '/estado/uf=<uf>/page=<page_num>')
+
+# Não Concluídas
+
+# Fabrício
+# Concluídas
+api.add_resource(AllEstados, '/estado/page=<page_num>')
+
+# Não Concluídas
+api.add_resource(MunByDataI, '/municipio/uf=<uf>/inicio=<data_inicio>/page=<page_num>')
+api.add_resource(MunByDataF, '/municipio/uf=<uf>/fim=<data_fim>/page=<page_num>')
+api.add_resource(MunByDataIF, '/municipio/uf=<uf>/inicio=<data_inicio>&fim=<data_fim>/page=<page_num>')
+api.add_resource(EstadoByDataI, '/estado/inicio=<data_inicio>/page=<page_num>')
+api.add_resource(EstadoByDataF, '/estado/fim=<data_fim>/page=<page_num>')
+api.add_resource(EstadoByDataIF, '/estado/inicio=<data_inicio>&fim=<data_fim>/page=<page_num>')
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
