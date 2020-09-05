@@ -11,7 +11,6 @@ api = Api(app)
 
 # Retorna todos os dados de estados
 class AllEstados(Resource):
-
     def get(self, page_num):
         ests = Estado.query.paginate(per_page=100, page=int(page_num))
 
