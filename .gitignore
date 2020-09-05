@@ -1,0 +1,6 @@
+
+*.xml
+.idea/API-Ocorrencias-Criminais.iml
+*.py
+app.py
+*.py
