@@ -11,6 +11,7 @@ api = Api(app)
 
 # Retorna todos os dados de estados
 class AllEstados(Resource):
+
     def get(self, page_num):
         ests = Estado.query.paginate(per_page=100, page=int(page_num))
 
@@ -19,7 +20,7 @@ class AllEstados(Resource):
             temp = {"estado": item.estado,
                     "crime": item.crime,
                     "mes_ano": f"{item.mes}-{item.ano}",
-                    "vitimas": item.vitimas,
+                    "vitimas": item.vitimas,    
                     "ocorrencias": item.ocorrencias}
 
             results.append(temp)
@@ -83,7 +84,40 @@ class EstadoByUFDataIF(Resource):
 
 class AllMuns(Resource):
     def get(self, page_num):
-        pass
+        muns = Municipio.query.paginate(per_page=100, page=int(page_num))
+
+        results = []
+        for item in muns.items:
+            temp = {"municipio": item.municipio,
+                    "Sigla_UF": item.sigla_UF,
+                    "Regiao": item.regiao,
+                    "mes_ano": f"{item.mes}-{item.ano}",
+                    "vitimas": item.vitimas}
+
+            results.append(temp)
+
+        
+        num_items = len(results)
+
+        if muns.has_next:
+            next_page = muns.next_num
+        else:
+            next_page = None
+
+        if muns.has_prev:
+            prev_page = muns.prev_num
+        else:
+            prev_page = None
+
+        return jsonify({"has_next": muns.has_next,
+                        "next_page": next_page,
+                        "has_prev": muns.has_prev,
+                        "prev_page": prev_page,
+                        "num_items": num_items,
+                        "total_results": muns.total,
+                        "num_pages": muns.pages,
+                        "results": results})
+            
 
 
 class MunByUF(Resource):
@@ -229,9 +263,9 @@ api.add_resource(EstadoByUFDataIF, '/estado/uf=<uf>/inicio=<data_inicio>&fim=<da
 
 # Ruan
 # Concluídas
+api.add_resource(AllMuns, '/municipio/page=<page_num>')
 
 # Não Concluídas
-api.add_resource(AllMuns, '/municipio')
 api.add_resource(MunByUF, '/municipio/uf=<uf>/page=<page_num>')
 api.add_resource(EstadosByUF, '/estado/uf=<uf>/page=<page_num>')
 
