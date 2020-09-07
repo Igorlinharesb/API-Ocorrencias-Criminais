@@ -195,12 +195,13 @@ class MunByUFDataI(Resource):
             return jsonify({"erro": "Data inválida, verifique a documentação da API."}), 422
 
         q1 = Municipio.query.filter_by(sigla_UF=uf.upper()
-                                       ).filter(Municipio.ano > ano)
-
-        q2 = Municipio.query.filter_by(sigla_UF=uf.upper()
                                       ).filter(Municipio.ano == ano
                                                ).filter(Municipio.mes >= mes)
+        
+        q2 = Municipio.query.filter_by(sigla_UF=uf.upper()
+                                       ).filter(Municipio.ano > ano)
 
+        
         m = q1.union_all(q2)
 
         muns = m.paginate(per_page=100, page=int(page_num))
@@ -292,7 +293,63 @@ class MunByUFDataF(Resource):
 
 class MunByUFDataIF(Resource):
     def get(self, uf, data_inicio, data_fim, page_num):
-        pass
+        try:
+            mes_inicio = int(data_inicio.split("-")[0])
+            ano_inicio = int(data_inicio.split("-")[1])
+            mes_fim = int(data_fim.split("-")[0])
+            ano_fim = int(data_fim.split("-")[1])
+
+            if mes_inicio < 1 or mes_inicio > 12 or mes_fim <1 or mes_inicio>12:
+                return jsonify({"erro": "Data inválida, verifique a documentação da API."}), 422
+
+        except:
+            return jsonify({"erro": "Data inválida, verifique a documentação da API."}), 422
+
+        q1 = Municipio.query.filter_by(sigla_UF=uf.upper()
+                                       ).filter(Municipio.ano == ano_inicio
+                                       ).filter(Municipio.mes >= mes_inicio)
+
+        q2 = Municipio.query.filter_by(sigla_UF=uf.upper()
+                                       ).filter(Municipio.ano > ano_inicio
+                                       ).filter(Municipio.ano < ano_fim)
+
+        q3 = Municipio.query.filter_by(sigla_UF=uf.upper()
+                                      ).filter(Municipio.ano == ano_fim
+                                               ).filter(Municipio.mes <= mes_fim)
+
+        m = q1.union_all(q2).union_all(q3)
+
+        muns = m.paginate(per_page=100, page=int(page_num))
+
+        results = []
+        for item in muns.items:
+            temp = {"municipio": item.municipio,
+                    "sigla_UF": item.sigla_UF,
+                    "regiao": item.regiao,
+                    "mes_ano": f"{item.mes}-{item.ano}",
+                    "vitimas": item.vitimas}
+            results.append(temp)
+
+        num_items = len(results)
+
+        if muns.has_next:
+            next_page = muns.next_num
+        else:
+            next_page = None
+
+        if muns.has_prev:
+            prev_page = muns.prev_num
+        else:
+            prev_page = None
+
+        return jsonify({"has_next": muns.has_next,
+                        "next_page": next_page,
+                        "has_prev": muns.has_prev,
+                        "prev_page": prev_page,
+                        "num_items": num_items,
+                        "total_results": muns.total,
+                        "num_pages": muns.pages,
+                        "results": results})
 
 
 # Rotas Igor
@@ -300,7 +357,7 @@ class MunByUFDataIF(Resource):
 api.add_resource(MunByUFDataF, '/municipio/uf=<uf>/fim=<data_fim>/page=<page_num>')
 
 # Não concluídas
-api.add_resource(MunByUFDataI, '/municipio/uf=<uf>/inicio=d<ata_inicio>/page=<page_num>')
+api.add_resource(MunByUFDataI, '/municipio/uf=<uf>/inicio=<data_inicio>/page=<page_num>')
 api.add_resource(MunByUFDataIF, '/municipio/uf=<uf>/inicio=<data_inicio>&fim=<data_fim>/page=<page_num>')
 
 api.add_resource(EstadoByUFDataI, '/estado/uf=<uf>/inicio=<data_inicio>/page=<page_num>')
