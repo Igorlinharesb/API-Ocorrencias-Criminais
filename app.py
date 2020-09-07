@@ -97,7 +97,7 @@ class EstadosByUF(Resource):
     def get(self, uf, page_num):
         q1 = Estado.query.filter_by(sigla_UF=uf.upper())
         e = q1
-        ests = e.query.paginate(per_page=100, page=int(page_num))
+        ests = e.paginate(per_page=100, page=int(page_num))
 
         results = []
         for item in ests.items:
@@ -359,9 +359,10 @@ class AllMuns(Resource):
 
 class MunByUF(Resource):
     def get(self, uf, page_num):
-            q1 = Municipio.query.filter_by(sigla_UF=uf.upper())
-            m = q1
-            muns = m.paginate(per_page=100, page=int(page_num))
+
+        q1 = Municipio.query.filter_by(sigla_UF=uf.upper())
+
+        muns = q1.paginate(per_page=100, page=int(page_num))
 
         results = []
         for item in muns.items:
