@@ -286,3 +286,4 @@ api.add_resource(EstadoByDataIF, '/estado/inicio=<data_inicio>&fim=<data_fim>/pa
 
 if __name__ == '__main__':
     app.run(debug=True)
+    
