@@ -9,6 +9,52 @@ db.init_app(app)
 api = Api(app)
 
 
+'''
+SCRIPT DE POVOAMENTO DO BANCO DE DADOS
+import csv
+
+@app.route("/povoa_bd")
+def povoa_bd():
+    with app.app_context():
+        db.create_all()
+    f = open("dados_mun.csv", encoding='utf-8')
+    g = open("dados_uf.csv", encoding='utf-8')
+    dataf = csv.reader(f)
+    datag = csv.reader(g)
+
+    id = 1
+
+    for nome, tipo_crime, ano, mes, vitimas, ocorrencias, uf in datag:
+        e = Estado(id=id,
+               estado=nome,
+               sigla_uf=uf,
+               crime=tipo_crime,
+               ano=ano,
+               mes=mes,
+               vitimas=vitimas,
+               ocorrencias=ocorrencias)
+        db.session.add(e)
+        id = id + 1
+
+    id = 1
+    for municipio, uf, regiao, vitimas, mes, ano in dataf:
+        m = Municipio(id=id,
+                      municipio=municipio,
+                      sigla_UF=uf,
+                      regiao=regiao,
+                      vitimas=vitimas,
+                      mes=mes,
+                      ano=int("20"+str(ano)))
+
+        db.session.add(m)
+        id = id + 1
+    db.session.commit()
+
+    return "Success"
+'''
+
+
+
 # Retorna todos os dados de estados
 class AllEstados(Resource):
 
