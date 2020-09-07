@@ -327,8 +327,39 @@ class AllMuns(Resource):
 
 class MunByUF(Resource):
     def get(self, uf, page_num):
-        pass
+            q1 = Municipio.query.filter_by(sigla_UF=uf.upper())
+            m = q1
+            muns = m.paginate(per_page=100, page=int(page_num))
 
+        results = []
+        for item in muns.items:
+            temp = {"municipio": item.municipio,
+                    "sigla_UF": item.sigla_UF,
+                    "regiao": item.regiao,
+                    "mes_ano": f"{item.mes}-{item.ano}",
+                    "vitimas": item.vitimas}
+            results.append(temp)
+
+        num_items = len(results)
+
+        if muns.has_next:
+            next_page = muns.next_num
+        else:
+            next_page = None
+
+        if muns.has_prev:
+            prev_page = muns.prev_num
+        else:
+            prev_page = None
+
+        return jsonify({"has_next": muns.has_next,
+                        "next_page": next_page,
+                        "has_prev": muns.has_prev,
+                        "prev_page": prev_page,
+                        "num_items": num_items,
+                        "total_results": muns.total,
+                        "num_pages": muns.pages,
+                        "results": results})
 
 class MunByDataI(Resource):
     def get(self, data_inicio, page_num):
@@ -534,9 +565,8 @@ api.add_resource(EstadoByUFDataIF,
 # Ruan
 # Concluídas
 api.add_resource(AllMuns, '/municipio/page=<page_num>')
-
-# Não Concluídas
 api.add_resource(MunByUF, '/municipio/uf=<uf>/page=<page_num>')
+# Não Concluídas
 api.add_resource(EstadosByUF, '/estado/uf=<uf>/page=<page_num>')
 
 # Não Concluídas
