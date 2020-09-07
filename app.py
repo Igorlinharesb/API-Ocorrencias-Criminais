@@ -58,7 +58,6 @@ def povoa_bd():
 
 
 class AllEstados(Resource):
-
     def get(self, page_num):
         ests = Estado.query.paginate(per_page=100, page=int(page_num))
 
@@ -96,7 +95,40 @@ class AllEstados(Resource):
 
 class EstadosByUF(Resource):
     def get(self, uf, page_num):
-        pass
+        q1 = Estado.query.filter_by(sigla_UF=uf.upper())
+        e = q1
+        ests = e.query.paginate(per_page=100, page=int(page_num))
+
+        results = []
+        for item in ests.items:
+            temp = {"estado": item.estado,
+                    "crime": item.crime,
+                    "mes_ano": f"{item.mes}-{item.ano}",
+                    "vitimas": item.vitimas,
+                    "ocorrencias": item.ocorrencias}
+
+            results.append(temp)
+
+        num_items = len(results)
+
+        if ests.has_next:
+            next_page = ests.next_num
+        else:
+            next_page = None
+
+        if ests.has_prev:
+            prev_page = ests.prev_num
+        else:
+            prev_page = None
+
+        return jsonify({"has_next": ests.has_next,
+                        "next_page": next_page,
+                        "has_prev": ests.has_prev,
+                        "prev_page": prev_page,
+                        "num_items": num_items,
+                        "total_results": ests.total,
+                        "num_pages": ests.pages,
+                        "results": results})
 
 
 class EstadoByDataI(Resource):
@@ -361,6 +393,7 @@ class MunByUF(Resource):
                         "num_pages": muns.pages,
                         "results": results})
 
+
 class MunByDataI(Resource):
     def get(self, data_inicio, page_num):
         pass
@@ -566,9 +599,7 @@ api.add_resource(EstadoByUFDataIF,
 # Concluídas
 api.add_resource(AllMuns, '/municipio/page=<page_num>')
 api.add_resource(MunByUF, '/municipio/uf=<uf>/page=<page_num>')
-# Não Concluídas
 api.add_resource(EstadosByUF, '/estado/uf=<uf>/page=<page_num>')
-
 # Não Concluídas
 
 # Fabrício
