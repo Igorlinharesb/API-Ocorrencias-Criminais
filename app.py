@@ -58,9 +58,9 @@ def povoa_bd():
 @app.route("/")
 def index():
     return "API DE OCORRÊNCIAS CRIMINAIS."
+
+
 # Retorna todos os dados de estados
-
-
 class AllEstados(Resource):
     def get(self, page_num):
         ests = Estado.query.paginate(per_page=100, page=int(page_num))
@@ -835,17 +835,176 @@ class MunByUFDataIF(Resource):
 
 class EstadoByDataI(Resource):
     def get(self, data_inicio, page_num):
-        pass
+        try:
+            mes = int(data_inicio.split("-")[0])
+            ano = int(data_inicio.split("-")[1])
+
+            if mes < 1 or mes > 12:
+                return jsonify({"erro": "Data inválida, verifique a documentação da API."}), 422
+
+        except:
+            return jsonify({"erro": "Data inválida, verifique a documentação da API."}), 422
+
+        q1 = Estado.query.filter(Estado.ano == ano
+                                 ).filter(Estado.mes >= mes)
+
+        q2 = Estado.query.filter(Estado.ano > ano)
+
+        e = q1.union_all(q2)
+
+        ests = e.paginate(per_page=100, page=int(page_num))
+
+        results = []
+        for item in ests.items:
+            temp = {"estado": item.estado,
+                    "sigla_UF": item.sigla_UF,
+                    "tipo_crime": item.crime,
+                    "mes_ano": f"{item.mes}-{item.ano}",
+                    "vitimas": item.vitimas,
+                    "ocorrencias": item.ocorrencias}
+
+            results.append(temp)
+
+        num_items = len(results)
+
+        if ests.has_next:
+            next_page = ests.next_num
+        else:
+            next_page = None
+
+        if ests.has_prev:
+            prev_page = ests.prev_num
+        else:
+            prev_page = None
+
+        return jsonify({"has_next": ests.has_next,
+                        "next_page": next_page,
+                        "has_prev": ests.has_prev,
+                        "prev_page": prev_page,
+                        "num_items": num_items,
+                        "total_results": ests.total,
+                        "num_pages": ests.pages,
+                        "results": results})
 
 
 class EstadoByDataF(Resource):
     def get(self, data_fim, page_num):
-        pass
+        try:
+            mes = int(data_fim.split("-")[0])
+            ano = int(data_fim.split("-")[1])
+
+            if mes < 1 or mes > 12:
+                return jsonify({"erro": "Data inválida, verifique a documentação da API."}), 422
+
+        except:
+            return jsonify({"erro": "Data inválida, verifique a documentação da API."}), 422
+
+        q1 = Estado.query.filter(Estado.ano < ano)
+
+        q2 = Estado.query.filter(Estado.ano == ano
+                                ).filter(Estado.mes <= mes)
+
+        e = q1.union_all(q2)
+
+        ests = e.paginate(per_page=100, page=int(page_num))
+
+        results = []
+        for item in ests.items:
+            temp = {"estado": item.estado,
+                    "sigla_UF": item.sigla_UF,
+                    "tipo_crime": item.crime,
+                    "mes_ano": f"{item.mes}-{item.ano}",
+                    "vitimas": item.vitimas,
+                    "ocorrencias": item.ocorrencias}
+
+            results.append(temp)
+
+        num_items = len(results)
+
+        if ests.has_next:
+            next_page = ests.next_num
+        else:
+            next_page = None
+
+        if ests.has_prev:
+            prev_page = ests.prev_num
+        else:
+            prev_page = None
+
+        return jsonify({"has_next": ests.has_next,
+                        "next_page": next_page,
+                        "has_prev": ests.has_prev,
+                        "prev_page": prev_page,
+                        "num_items": num_items,
+                        "total_results": ests.total,
+                        "num_pages": ests.pages,
+                        "results": results})
 
 
 class EstadoByDataIF(Resource):
     def get(self, data_inicio, data_fim, page_num):
-        pass
+        try:
+            mes_inicio = int(data_inicio.split("-")[0])
+            ano_inicio = int(data_inicio.split("-")[1])
+            mes_fim = int(data_fim.split("-")[0])
+            ano_fim = int(data_fim.split("-")[1])
+
+            if mes_inicio < 1 or mes_inicio > 12 or mes_fim < 1 or mes_inicio > 12:
+                return jsonify({"erro": "Data inválida, verifique a documentação da API."}), 422
+
+        except:
+            return jsonify({"erro": "Data inválida, verifique a documentação da API."}), 422
+
+        if ano_fim == ano_inicio:
+            e = Estado.query.filter_by(ano=ano_fim
+                                       ).filter(Estado.mes >= mes_inicio
+                                                ).filter(Estado.mes <= mes_fim)
+
+        else:
+            q1 = Estado.query.filter(Estado.ano == ano_inicio
+                                    ).filter(Estado.mes >= mes_inicio)
+
+            q2 = Estado.query.filter(Estado.ano > ano_inicio
+                                    ).filter(Estado.ano < ano_fim)
+
+            q3 = Estado.query.filter(Estado.ano == ano_fim
+                                    ).filter(Estado.mes < mes_fim)
+
+            e = q1.union_all(q2).union_all(q3)
+
+        ests = e.paginate(per_page=100, page=int(page_num))
+
+        results = []
+        for item in ests.items:
+            temp = {"estado": item.estado,
+                    "sigla_UF": item.sigla_UF,
+                    "tipo_crime": item.crime,
+                    "mes_ano": f"{item.mes}-{item.ano}",
+                    "vitimas": item.vitimas,
+                    "ocorrencias": item.ocorrencias}
+
+            results.append(temp)
+
+        num_items = len(results)
+
+        if ests.has_next:
+            next_page = ests.next_num
+        else:
+            next_page = None
+
+        if ests.has_prev:
+            prev_page = ests.prev_num
+        else:
+            prev_page = None
+
+        return jsonify({"has_next": ests.has_next,
+                        "next_page": next_page,
+                        "has_prev": ests.has_prev,
+                        "prev_page": prev_page,
+                        "num_items": num_items,
+                        "total_results": ests.total,
+                        "num_pages": ests.pages,
+                        "results": results})
 
 
 # Rotas Igor
@@ -884,8 +1043,6 @@ api.add_resource(
 # Concluídas
 api.add_resource(
     AllEstados, '/estado/page=<page_num>')
-
-# Não Concluídas
 api.add_resource(
     MunByDataI, '/municipio/inicio=<data_inicio>/page=<page_num>')
 api.add_resource(
