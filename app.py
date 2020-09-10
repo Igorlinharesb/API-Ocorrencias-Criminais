@@ -1,5 +1,5 @@
 import csv
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_restful import Resource, Api
 from models import *
 
@@ -57,7 +57,7 @@ def povoa_bd():
 
 @app.route("/")
 def index():
-    return "API DE OCORRÊNCIAS CRIMINAIS."
+    return render_template('documentacao.html')
 
 
 # Retorna todos os dados de estados
@@ -902,7 +902,7 @@ class EstadoByDataF(Resource):
         q1 = Estado.query.filter(Estado.ano < ano)
 
         q2 = Estado.query.filter(Estado.ano == ano
-                                ).filter(Estado.mes <= mes)
+                                 ).filter(Estado.mes <= mes)
 
         e = q1.union_all(q2)
 
@@ -962,13 +962,13 @@ class EstadoByDataIF(Resource):
 
         else:
             q1 = Estado.query.filter(Estado.ano == ano_inicio
-                                    ).filter(Estado.mes >= mes_inicio)
+                                     ).filter(Estado.mes >= mes_inicio)
 
             q2 = Estado.query.filter(Estado.ano > ano_inicio
-                                    ).filter(Estado.ano < ano_fim)
+                                     ).filter(Estado.ano < ano_fim)
 
             q3 = Estado.query.filter(Estado.ano == ano_fim
-                                    ).filter(Estado.mes < mes_fim)
+                                     ).filter(Estado.mes < mes_fim)
 
             e = q1.union_all(q2).union_all(q3)
 
@@ -1049,7 +1049,6 @@ api.add_resource(
     MunByDataF, '/municipio/fim=<data_fim>/page=<page_num>')
 api.add_resource(
     MunByDataIF, '/municipio/inicio=<data_inicio>&fim=<data_fim>/page=<page_num>')
-
 api.add_resource(
     EstadoByDataI, '/estado/inicio=<data_inicio>/page=<page_num>')
 api.add_resource(
