@@ -41,9 +41,6 @@
    <header class="container ">
       <article class="container">
         <h1 class="text-center">API Ocorrências Criminais</h1>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vulputate condimentum sodales. Aliquam accumsan diam vel sem luctus finibus.
-        </p>
         
       </article>
    </header>
@@ -54,7 +51,7 @@
       <section class="container">
         <div class="">O usuário tem a opção de acessar todos os registros da base de dados por município através da requisição HTTP 		abaixo:</div>
         <p>
-            <span>GET </span>link_do_servidor_aws/api/municipio/page=1 HTTP/ 1.1
+            <span>GET </span>http://3.86.8.77/municipio/page=1 HTTP/ 1.1
         </p>
 	<div class="">Serão retornados os registros de todos os municípios da base de dados</div>
 	<br></br>
@@ -62,7 +59,7 @@
       <section class="container">
         <div class="">O usuário tem a opção de acessar todos os registros da base de dados por município de um estado específico 		passando o parâmetro <b>uf</b>, conforme o exemplo de requisição HTTP abaixo:</div>
         <p>
-          <span>GET </span>link_do_servidor_aws/api/municipio/uf=AC/page=1 HTTP/1.1
+          <span>GET </span>http://3.86.8.77/municipio/uf=AC/page=1 HTTP/1.1
         </p>
 	<div class="">Serão retornados os registros de todos os municípios do estado passado como parâmetro, no caso do exemplo acima, 		todos os municípios do estado do Acre.</div>
 	<br></br>
@@ -70,7 +67,7 @@
       <section class="container">
         <div class="">O usuário tem a opção de acessar todos os registros da base de dados por município em um intervalo de datas (no 		formato mês-ano) passando os parâmetros <b>início </b> e <b>fim</b> conforme o exemplo de requisição HTTP abaixo:</div>
         <p>
-          <span>GET </span>link_do_servidor_aws/api/estado/inicio=01-19&fim=12-19/page=1 HTTP/1.1
+          <span>GET </span>http://3.86.8.77/estado/inicio=01-19&fim=12-19/page=1 HTTP/1.1
         </p>
 	<div class="">Serão retornados os registros de todos os municípios entre a data passada no parâmetro <b>início</b> e a data 			passada no parâmetro <b>fim</b> (no caso do exemplo acima, entre janeiro e dezembro de 2019).</div>
 	<br></br>
@@ -79,9 +76,9 @@
       <section class="container">
         <div class="">O usuário também pode passar apenas um dos parâmetros acima. Caso seja passado apenas o parâmetro inicio será 		retornado todos os registros de todos os municípios entre a data passada no parâmetro <b>inicio</b> e a data do dado mais 		recente. Caso seja passado apenas o parâmetro <b>fim</b>, serão retornados os registros de todos os municípios entre a data 		do registro mais antigo e data passada no parâmetro <b>fim</b>. A seguir temos 2 exemplos:</div>
         <p>
-          <span>GET </span>link_do_servidor_aws/api/municipio/inicio=01-19/page=1 HTTP/1.1
+          <span>GET </span>http://3.86.8.77/municipio/inicio=01-19/page=1 HTTP/1.1
 	  <br></br>
-	  <span>GET </span>link_do_servidor_aws/api/municipio/fim=12-19/page=1 HTTP/1.1
+	  <span>GET </span>http://3.86.8.77/municipio/fim=12-19/page=1 HTTP/1.1
         </p>
 	<div class="">No primeiro exemplo serão retornados todos os registros a partir de janeiro de 2019, enquanto no segundo exemplo 		serão retornados todos os registros até dezembro de 2019.</div>
 	<br></br>
@@ -90,13 +87,13 @@
       <section class="container">
         <div class="">Por fim, o usuário pode combinar as buscas anteriores, buscando por um estado específico, dentro de um intervalo 		de datas conforme a requisição HTTP abaixo:</div>
         <p>
-          <span>GET </span>link_do_servidor_aws/api/municipio/uf=AC/inicio=01-19&fim=12-19/page=1 HTTP/1.1
+          <span>GET </span>http://3.86.8.77/municipio/uf=AC/inicio=01-19&fim=12-19/page=1 HTTP/1.1
         </p>
 	<div class="">Assim, como as requisições por data, também é possível passar apenas um dos parâmetros, ou só o parâmetro 		<b>inicio</b> ou só o parâmetro <b>fim</b>.</div>
 	<p>
-          <span>GET </span>link_do_servidor_aws/api/municipio/uf=AC/inicio=01-19/page=1 HTTP/1.1
+          <span>GET </span>http://3.86.8.77/municipio/uf=AC/inicio=01-19/page=1 HTTP/1.1
 	  <br></br>
-	  <span>GET </span>link_do_servidor_aws/api/municipio/uf=AC/fim=12-19/page=1 HTTP/1.1
+	  <span>GET </span>http://3.86.8.77/municipio/uf=AC/fim=12-19/page=1 HTTP/1.1
         </p>
 	<div class="">Nesses últimos casos, são retornados todos os registros de um estado específico no intervalo desejado pelo 		usuário</div>
 	<br></br>
@@ -110,7 +107,7 @@
       <section class="container">
         <div class="">O usuário tem a opção de acessar todos os registros da base de dados por estado através da requisição HTTP 		abaixo:</div>
         <p>
-          <span>GET </span>link_do_servidor_aws/api/estado/page=1 HTTP/ 1.1
+          <span>GET </span>http://3.86.8.77/estado/page=1 HTTP/ 1.1
         </p>
 	 <div class="">Serão retornados os registros de todos os municípios da base de dados</div>
 	 <br></br> 
@@ -119,7 +116,7 @@
       <section class="container">
         <div class="">O usuário tem a opção de acessar todos os registros da base de dados de um estado específico passando o 		parâmetro <b>uf</b> conforme o exemplo de requisição HTTP abaixo:</div>
         <p>
-          <span>GET </span>link_do_servidor_aws/api/estado/uf=AC/page=1 HTTP/1.1
+          <span>GET </span>http://3.86.8.77/estado/uf=AC/page=1 HTTP/1.1
         </p>
 	<div class="">Serão retornados os registros do estado passado como parâmetro, no caso do exemplo acima, do estado do 		Acre.</div>
 	<br></br> 
@@ -128,7 +125,7 @@
       <section class="container">
         <div class="">O usuário tem a opção de acessar todos os registros da base de dados por estado em um intervalo de datas (no 		formato mês-ano) passando o parâmetro <b>inicio</b> e o parametro <b>fim</b> conforme o exemplo de requisição HTTP 			abaixo:</div>
         <p>
-          <span>GET </span>link_do_servidor_aws/api/estado/inicio=01-19&fim=12-19/page=1 HTTP/1.1
+          <span>GET </span>http://3.86.8.77/estado/inicio=01-19&fim=12-19/page=1 HTTP/1.1
         </p>
 	<div class="">Aqui, serão retornados os registros de todos os estados entre a data passada no parâmetro <b>inicio</b> e a data 		passada no parâmetro <b>fim</b>, (no caso do exemplo acima, entre janeiro e dezembro de 2019).</div>
       	<br></br>
@@ -137,9 +134,9 @@
        <section class="container">
         <div class="">O usuário também pode passar apenas um dos parâmetros acima. Caso seja passado apenas o parâmetro <b>inicio</b> 		serão retornados os registros de todos os estados entre a data passada em no parâmetro <b>inicio</b> e a data do 		registro mais recente. Caso seja passado apenas o parâmetro <b>fim</b>, serão retornados os registros de todos os 		estados entre a data do registro mais antigo e data passada no parâmetro <b>fim</b>. Abaixo temos 2 exemplos:</div>
         <p>
-          <span>GET </span>link_do_servidor_aws/api/estado/inicio=01-19/page=1 HTTP/1.1
+          <span>GET </span>http://3.86.8.77/estado/inicio=01-19/page=1 HTTP/1.1
 	  <br></br>
-	  <span>GET </span>link_do_servidor_aws/api/estado/fim=12-19/page=1 HTTP/1.1
+	  <span>GET </span>http://3.86.8.77/estado/fim=12-19/page=1 HTTP/1.1
         </p>
       <br></br>
       </section>
@@ -147,13 +144,13 @@
       <section class="container">
         <div class="">Por fim o usuário pode combinar as buscas anteriores, buscando por um estado específico dentro de um intervalo 		de datas, conforme a requisição HTTP abaixo.</div>
         <p>
-          <span>GET </span>link_do_servidor_aws/api/estado/uf=AC/inicio=01-19&fim=12-19/page=1 HTTP/1.1
+          <span>GET </span>http://3.86.8.77/estado/uf=AC/inicio=01-19&fim=12-19/page=1 HTTP/1.1
         </p>
 	<div class="">Assim como as requisições por data também é possível passar apenas um dos parâmetros, ou só <b>inicio</b> ou 		<b>fim</b>.</div>
         <p>
-          <span>GET </span>link_do_servidor_aws/api/estado/uf=AC/inicio=01-19/page=1 HTTP/1.1
+          <span>GET </span>http://3.86.8.77/estado/uf=AC/inicio=01-19/page=1 HTTP/1.1
 	  <br></br>
-	  <span>GET </span>link_do_servidor_aws/api/estado /uf=AC/fim=12-19/page=1 HTTP/1.1
+	  <span>GET </span>http://3.86.8.77/estado/uf=AC/fim=12-19/page=1 HTTP/1.1
         </p>
 	<div class="">Nesses últimos casos, são retornados todos os registros de um estado específico, no intervalo desejado pelo 		usuário.</div>
       <br></br>
